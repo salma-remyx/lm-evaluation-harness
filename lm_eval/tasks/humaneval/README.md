@@ -35,6 +35,29 @@ Note: For instruct tuned models, we recommend the instruct variant. That uses a 
 - `humaneval_instruct`: pass@1 with config more appropriate for instruct models. (implementation taken from llama [evals](https://huggingface.co/datasets/meta-llama/Llama-3.1-8B-Instruct-evals/viewer/Llama-3.1-8B-Instruct-evals__human_eval__details?row=0))
 - `humaneval_64_instruct`: pass@64 variant
 
+### Multi-dimensional code quality — adapted from *Beyond Correctness* (RACE)
+
+In addition to `pass@k`, the HumanEval metric now reports lightweight,
+static code-quality dimensions over the same generations, adapted from
+[RACE: Beyond Correctness: Benchmarking Multi-dimensional Code Generation for
+Large Language Models](https://arxiv.org/abs/2407.11470). RACE argues that
+scoring code-generation models on functional correctness alone is incomplete
+and contamination-prone, and that qualities like readability and complexity
+also matter in real development.
+
+The extra metrics are computed without executing the candidate code (pure
+`ast`/lexical analysis in `code_quality.py`) and are reported alongside
+`pass@1`, each in `[0, 1]` with higher being better:
+
+- `readability` — line length, naming conventions, presence of documentation
+- `complexity` — cyclomatic-complexity-based simplicity (simpler scores higher)
+- `maintainability` — nesting depth and function length
+- `code_quality` — the mean of the three dimensions above
+
+RACE's requirement-conditioned prompts and LLM-judge dimensions are
+intentionally out of scope; this slice delivers the "beyond correctness"
+signal cheaply over the existing `generate_until` + execution-metric contract.
+
 ### Checklist
 
 For adding novel benchmarks/datasets to the library:
