@@ -280,6 +280,17 @@ class EvaluationTracker:
 
                 file_results_aggregated.write_text(dumped, encoding="utf-8")
 
+                # Also emit a source-agnostic "unified eval results" document
+                # so scores and metadata can be compared and shared across
+                # evaluation frameworks, not just within lm-eval logs.
+                from lm_eval.loggers.unified_results_schema import (
+                    write_unified_results,
+                )
+
+                write_unified_results(
+                    results, file_results_aggregated, default=handle_non_serializable
+                )
+
                 if self.api and self.push_results_to_hub:
                     repo_id = (
                         self.results_repo
