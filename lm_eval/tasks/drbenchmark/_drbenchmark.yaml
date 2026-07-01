@@ -1,0 +1,14 @@
+group: drbenchmark
+task:
+  - drbenchmark_frenchmedmcqa
+  - drbenchmark_cas
+  - drbenchmark_essai
+  - drbenchmark_morfitt
+aggregate_metric_list:
+  # DrBenchmark reports one macro-averaged score across its heterogeneous tasks;
+  # an unweighted (macro) mean of the per-task primary metric reproduces that.
+  - metric: acc
+    aggregation: mean
+    weight_by_size: false
+metadata:
+  version: 0.0
