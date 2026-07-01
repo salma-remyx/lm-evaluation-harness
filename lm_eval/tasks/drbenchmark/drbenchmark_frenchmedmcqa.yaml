@@ -1,0 +1,11 @@
+# Main variant: biomedical multiple-choice QA (FrenchMedMCQA).
+include: "_default_template_yaml"
+tag:
+  - drbenchmark
+  - drbenchmark_qa
+task: drbenchmark_frenchmedmcqa
+dataset_path: Dr-BERT/FrenchMedMCQA
+training_split: train
+doc_to_text: "Question: {{question}}\nA. {{answer_a}}\nB. {{answer_b}}\nC. {{answer_c}}\nD. {{answer_d}}\nE. {{answer_e}}\nRéponse:"
+doc_to_choice: ["A", "B", "C", "D", "E"]
+doc_to_target: correct_answers

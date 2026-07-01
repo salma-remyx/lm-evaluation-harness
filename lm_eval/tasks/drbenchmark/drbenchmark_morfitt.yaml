@@ -1,0 +1,23 @@
+# MorFITT: medical-specialty classification of PubMed abstracts (French).
+include: "_default_template_yaml"
+tag:
+  - drbenchmark
+  - drbenchmark_cls
+task: drbenchmark_morfitt
+dataset_path: Dr-BERT/MORFITT
+training_split: train
+doc_to_text: "Résumé: {{abstract}}\nSpécialité médicale:"
+doc_to_choice:
+  - chirurgie
+  - microbiologie
+  - étiologie
+  - physiologie
+  - vétérinaire
+  - psychologie
+  - génétique
+  - pharmacologie
+  - immunologie
+  - virologie
+  - parasitologie
+  - chimie
+doc_to_target: label

@@ -9,8 +9,6 @@ import os
 
 from pytablewriter import LatexTableWriter, MarkdownTableWriter
 
-from scripts.benchmark_aggregate import benchmark_score_row
-
 
 logger = logging.getLogger(__name__)
 
@@ -46,11 +44,6 @@ def make_table(result_dict):
                     values.append([k, version, m, f"{v * 100:.2f}", "", ""])
             k = ""
             version = ""
-
-    # DrBenchmark-style single benchmark score across the heterogeneous tasks.
-    agg_row = benchmark_score_row(result_dict)
-    if agg_row is not None:
-        values.append(agg_row)
 
     md_writer.value_matrix = values
     latex_writer.value_matrix = values

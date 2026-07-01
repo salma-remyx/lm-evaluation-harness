@@ -1,4 +1,4 @@
-"""Benchmark-level macro-aggregation of heterogeneous task results.
+"""Benchmark-level macro-aggregation of heterogeneous DrBenchmark results.
 
 Adapted from *DrBenchmark: A Large Language Understanding Evaluation Benchmark
 for French Biomedical Domain* (Labrak et al., 2024, https://arxiv.org/abs/2402.13432).
@@ -13,6 +13,11 @@ standard ``{"results": {...}, "versions": {...}}`` payload, it selects one prima
 metric per task and macro-averages the comparable ([0, 1]-scaled) ones into a
 single benchmark score. Unbounded metrics (perplexity, bits-per-byte, ...) are
 excluded because averaging them with accuracy-like scores is not meaningful.
+
+The macro-average across the ``drbenchmark`` subtasks is also expressed natively
+in ``_drbenchmark.yaml`` via ``aggregate_metric_list`` (unweighted mean of
+``acc``); the helpers here support post-hoc aggregation over an arbitrary,
+heterogeneous results payload.
 """
 
 # Metric-name suffix used by the harness to mark standard-error columns.
