@@ -1,8 +1,23 @@
-import ast
+import importlib.util
+import os
 import random
 import re
 
 import numpy as np
+
+
+# ``utils`` is loaded by lm-eval through file-location import (see
+# ``lm_eval.utils.import_function``), so it has no package context and cannot
+# use a relative import for its sibling helper. Load ``option_schema`` by path
+# so the same code works whether this module is imported as a package member or
+# exec'd standalone by the task loader.
+_option_schema_spec = importlib.util.spec_from_file_location(
+    "mmmu_option_schema",
+    os.path.join(os.path.dirname(__file__), "option_schema.py"),
+)
+_option_schema = importlib.util.module_from_spec(_option_schema_spec)
+_option_schema_spec.loader.exec_module(_option_schema)
+extract_options = _option_schema.extract_options
 
 
 random.seed(42)
@@ -57,7 +72,7 @@ def _doc_to_text(doc):
     if doc["question_type"] == "multiple-choice":
         choices_str = ""
 
-        for i, choice in enumerate(ast.literal_eval(doc["options"])):
+        for i, choice in enumerate(extract_options(doc)):
             # add (A) {choice1}\n , (B) {choice2}\n , and so on
             # to create the list of formatted choices in the prompt
             choices_str += f"\n({chr(ord(START_CHR) + i)}) {choice}"
@@ -76,11 +91,13 @@ def _doc_to_text(doc):
 def process_results(doc, results):
     if doc["question_type"] == "multiple-choice":
         # multichoice logic
-        option_strs = ast.literal_eval(doc["options"])
+        option_strs = extract_options(doc)
         option_letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I"]
 
         all_choices = option_letters[: len(option_strs)]
-        index2ans = {index: ans for index, ans in zip(option_letters, option_strs)}
+        index2ans = {
+            index: ans for index, ans in zip(option_letters, option_strs, strict=False)
+        }
 
         pred = parse_multi_choice_response(results[0], all_choices, index2ans)
         # print(pred, all_choices, index2ans)
@@ -258,19 +275,18 @@ def parse_open_response(response):
                             shortest_key_response = resp.split(indicator)[-1].strip()
                     # key_responses.append(resp.split(indicator)[1].strip())
 
-            if shortest_key_response:
-                # and it's not trivial
-                if shortest_key_response.strip() not in [
-                    ":",
-                    ",",
-                    ".",
-                    "!",
-                    "?",
-                    ";",
-                    ":",
-                    "'",
-                ]:
-                    key_responses.append(shortest_key_response)
+            # keep it only if present and not a trivial punctuation-only match
+            if shortest_key_response and shortest_key_response.strip() not in [
+                ":",
+                ",",
+                ".",
+                "!",
+                "?",
+                ";",
+                ":",
+                "'",
+            ]:
+                key_responses.append(shortest_key_response)
         if len(key_responses) == 0:  # did not found any
             return [response]
         return key_responses
