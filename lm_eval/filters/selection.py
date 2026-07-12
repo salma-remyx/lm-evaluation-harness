@@ -4,9 +4,10 @@ from lm_eval.api.filter import Filter
 from lm_eval.api.registry import register_filter
 
 
-# TODO: implement "arg_max" filter. either it should take in an arbitrary "scoring"/reward function
-# that takes an input and returns a scalar and then should select the max reward,
-# or should implement different filters for different ways of handling a reward model's inference.
+# The "arg_max" reward-scoring selection filter lives in ``scored_selection.py``
+# (``ScoredSelectionFilter``): it takes an arbitrary scoring/reward function over
+# candidate responses and selects the max, with a parameter-free consensus scorer
+# as the default when no verifier is supplied.
 
 
 @register_filter("take_first")
