@@ -149,6 +149,23 @@ def brier_score_fn(items):  # This is a passthrough function
     return items
 
 
+@register_aggregation("calibration_error")
+def calibration_error(items):
+    from lm_eval.api.calibration import expected_calibration_error
+
+    return expected_calibration_error(items)
+
+
+@register_metric(
+    metric="calibration_error",
+    higher_is_better=False,
+    output_type=["multiple_choice"],
+    aggregation="calibration_error",
+)
+def calibration_error_fn(items):  # This is a passthrough function
+    return items
+
+
 @register_metric(
     metric="acc",
     higher_is_better=True,
