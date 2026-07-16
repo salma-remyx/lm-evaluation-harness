@@ -1564,6 +1564,11 @@ class ConfigurableTask(Task):
                     if "brier_score" in use_metric
                     else {}
                 ),
+                **(
+                    {"calibration_error": (gold, prob_norm)}
+                    if "calibration_error" in use_metric
+                    else {}
+                ),
                 **({"likelihood": (gold, lls)} if "likelihood" in use_metric else {}),
             }
 
