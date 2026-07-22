@@ -644,6 +644,8 @@ We support wildcards in task names, for example you can run all of the machine-t
 
 To save evaluation results provide an `--output_path`. We also support logging model responses with the `--log_samples` flag for post-hoc analysis.
 
+Alongside the standard aggregated `results_*.json`, the harness also writes a companion `results_unified_*.json` in a source-agnostic schema — adapted from [Every Eval Ever: A Unifying Schema and Community Repository for AI Evaluation Results](https://arxiv.org/abs/2606.14516) — that normalizes model metadata and per-benchmark metrics (value, stderr, direction) into a single document for easier cross-framework comparison and sharing.
+
 > [!TIP]
 > Use `--use_cache <DIR>` to cache evaluation results and skip previously evaluated samples when resuming runs of the same (model, task) pairs. Note that caching is rank-dependent, so restart with the same GPU count if interrupted. You can also use --cache_requests to save dataset preprocessing steps for faster evaluation resumption.
 
